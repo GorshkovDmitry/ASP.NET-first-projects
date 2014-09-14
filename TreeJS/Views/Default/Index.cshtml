@@ -1,0 +1,98 @@
+﻿@model TreeJS.Models.File
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>TreeJS</title>
+    <script src="../Scripts/jquery-1.10.2.min.js"></script>
+    <script src="../Scripts/jstree.min.js"></script>
+    <link href="../Scripts/themes/default/style.css" rel="stylesheet">
+    <script type="text/javascript" class="source">
+        $(document).ready(function () {
+            $("#tree").jstree({
+                'core': {
+                    'check_callback': true,
+                },
+                'themes': { "stripes": true },
+                'types': {
+                    'types': {
+
+                        'File': {
+                            'valid_children': ['none'],
+                            'clickable': false,
+                            'draggable': false,
+                            'droppable': false,
+                            'icon': { 'image': '../Images/file-js.jpg' },
+
+                        }
+                    }
+                },
+
+                'plugins': ["dnd", "types", "html_data"],
+            })
+
+            $('#tree').on("move_node.jstree", function (event, data) {
+                var moved_node = data.node.id;
+                if (moved_node != null) {
+                    var parent_node = data.parent;
+                    if (parent_node != -1)
+                        save(moved_node, parent_node);
+                    else
+                        save(moved_node, '0');
+                }
+            });
+
+
+        });
+    </script>
+    <script type="text/javascript">
+        function save(node_id, parent_id) {
+            var actionUrl = "/Default/Save?childId=" + node_id + "&parentId=" + parent_id;
+
+            $.ajax(
+            {
+                type: "POST",
+                url: actionUrl,
+                data: null
+            });
+
+
+
+        }
+
+        $(function () {
+            $('#loadwnd').fadeOut(10);
+            $("#loadwnd").ajaxStart(function () {
+                $(this).show();
+            });
+
+            $("#loadwnd").ajaxStop(function () {
+                $(this).hide();
+            });
+
+        });
+    </script>
+
+</head>
+<body>
+    <div id="tree">
+        <ul id="tree">
+            <li>
+                @Model.Name
+                @Html.Partial("Childrens", Model)
+            </li>
+        </ul>
+    </div>
+
+    <div id="loadwnd" class="wrapper">
+        <div class="wndLoading">
+            <img src="../Images/loading.gif" />
+        </div>
+    </div>
+</body>
+</html>

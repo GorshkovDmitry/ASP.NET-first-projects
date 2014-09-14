@@ -1,0 +1,30 @@
+﻿@model TreeJS.Models.File
+@foreach (var item in Model.Files)
+{
+    <ul>
+        @if (item != null)
+        {
+            if (item.type == null)
+            {
+                <li id=@item.ID rel="Path">
+                    <a href="#" class="usr">@item.Name</a>
+                    @if (item.Files.Count > 0)
+                    {
+                        @Html.Partial("Childrens", item)
+                    }
+                </li>
+            }
+            else
+            {
+                <li id=@item.ID data-jstree='{"type":"File"}'>
+                    <a href="#" class="usr">@item.Name</a>
+                    @if (item.Files.Count > 0)
+                    {
+                        @Html.Partial("Childrens", item)
+                    }
+                </li>
+            }
+
+        }
+    </ul>
+}
